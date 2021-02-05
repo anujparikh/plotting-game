@@ -4,20 +4,21 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class HidDriver implements Runnable {
 
-    private static final int maxBufferSize = 10;
     private final StringBuilder stringBuilder;
-    private final String[] messageBuffer;
-    private int currentMessage;
+    private final List<String> messageBuffer;
+    private final int delay;
     private Consumer<String> subscriber;
 
-    public HidDriver() {
+    public HidDriver(int delay) {
+        this.delay = delay;
         this.stringBuilder = new StringBuilder();
-        messageBuffer = new String[maxBufferSize];
-        currentMessage = 0;
+        messageBuffer = new ArrayList<>(1);
     }
 
     public void init() {
@@ -42,18 +43,6 @@ public class HidDriver implements Runnable {
         compPort.addDataListener(serialPortDataListener);
     }
 
-    private void parse(byte[] serialData) {
-        stringBuilder.append(new String(serialData));
-        int firstReturnPos = stringBuilder.indexOf("\n");
-        if (firstReturnPos > 0) {
-            messageBuffer[currentMessage] = stringBuilder.substring(0, firstReturnPos);
-            currentMessage = (currentMessage + 1) % maxBufferSize;
-            stringBuilder.delete(0, firstReturnPos);
-        } else if (firstReturnPos == 0) {
-            stringBuilder.deleteCharAt(0);
-        }
-    }
-
     public void subscribe(Consumer<String> subscriber) {
         this.subscriber = subscriber;
     }
@@ -62,10 +51,28 @@ public class HidDriver implements Runnable {
     public void run() {
         while (true) {
             try {
-                this.subscriber.accept(messageBuffer[currentMessage]);
-                Thread.sleep(50);
+                if (!messageBuffer.isEmpty()) {
+                    String message = messageBuffer.get(0);
+                    messageBuffer.remove(0);
+                    if(message.split(",").length == 4) {
+                        this.subscriber.accept(message);
+                    }
+                }
+                Thread.sleep(this.delay);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    private void parse(byte[] serialData) {
+        for (byte serialDatum : serialData) {
+            char ch = (char) serialDatum;
+            if (ch != '\n') {
+                stringBuilder.append(ch);
+            } else {
+                messageBuffer.add(stringBuilder.toString());
+                stringBuilder.delete(0, stringBuilder.length());
             }
         }
     }
