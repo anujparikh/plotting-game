@@ -54,7 +54,7 @@ public class HidDriver implements Runnable {
                 if (!messageBuffer.isEmpty()) {
                     String message = messageBuffer.get(0);
                     messageBuffer.remove(0);
-                    if(message.split(",").length == 4) {
+                    if (message.split(",").length == 4) {
                         this.subscriber.accept(message);
                     }
                 }
@@ -72,7 +72,7 @@ public class HidDriver implements Runnable {
                 stringBuilder.append(ch);
             } else {
                 messageBuffer.add(stringBuilder.toString());
-                stringBuilder.delete(0, stringBuilder.length());
+                stringBuilder.setLength(0);
             }
         }
     }

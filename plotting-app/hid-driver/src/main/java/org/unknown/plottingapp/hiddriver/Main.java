@@ -5,11 +5,7 @@ public class Main {
     public static void main(String[] args) {
         HidDriver driver = new HidDriver(10);
         driver.init();
-        driver.subscribe((x) -> {
-            if (x != null) {
-                System.out.println(x);
-            }
-        });
+        driver.subscribe(System.out::println);
         Thread thread = new Thread(driver);
         thread.start();
     }
