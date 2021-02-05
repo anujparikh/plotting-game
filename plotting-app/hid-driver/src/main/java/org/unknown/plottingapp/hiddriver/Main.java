@@ -1,9 +1,11 @@
 package org.unknown.plottingapp.hiddriver;
 
+import org.unknown.plottingapp.hiddriver.driver.HIDDriver;
+
 public class Main {
 
     public static void main(String[] args) {
-        HidDriver driver = new HidDriver(10);
+        HIDDriver driver = new HIDDriver(10);
         driver.init();
         driver.subscribe(System.out::println);
         Thread thread = new Thread(driver);
