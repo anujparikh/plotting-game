@@ -3,7 +3,7 @@ package org.unknown.plottingapp.hiddriver.driver;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
-import org.unknown.plottingapp.hiddriver.models.HIDState;
+import org.unknown.plottingapp.hiddriver.datatypes.HIDState;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,12 +15,14 @@ public class HIDDriver implements Runnable {
 
     private final StringBuilder stringBuilder;
     private final List<String> messageBuffer;
-    private final int delay;
+    private final int samplingDelay;
+    private final int publishDelay;
     private final HIDState hidState;
     private Consumer<HIDState> subscriber;
 
-    public HIDDriver(int delay) {
-        this.delay = delay;
+    public HIDDriver(int samplingDelay, int publishDelay) {
+        this.samplingDelay = samplingDelay;
+        this.publishDelay = publishDelay;
         this.stringBuilder = new StringBuilder();
         this.messageBuffer = new ArrayList<>(1);
         this.hidState = new HIDState();
@@ -54,11 +56,15 @@ public class HIDDriver implements Runnable {
 
     @Override
     public void run() {
+        int elapsedTime = 0;
         while (true) {
             try {
                 setHidState();
-                this.subscriber.accept(this.hidState);
-                Thread.sleep(this.delay);
+                if (elapsedTime >= publishDelay) {
+                    this.subscriber.accept(this.hidState);
+                }
+                Thread.sleep(this.samplingDelay);
+                elapsedTime += this.samplingDelay;
             } catch (IndexOutOfBoundsException | NumberFormatException | InterruptedException | NullPointerException e) {
                 // @pass
             }

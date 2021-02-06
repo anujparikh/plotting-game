@@ -1,4 +1,4 @@
-package org.unknown.plottingapp.hiddriver.models;
+package org.unknown.plottingapp.hiddriver.datatypes;
 
 public enum StickPosition {
     UP,
