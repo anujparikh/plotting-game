@@ -19,12 +19,19 @@ public class KeyCommandAdapter extends KeyAdapter {
 
         int key = e.getKeyCode();
 
-        if (key == 39) {
-            gameState.setTheta(gameState.getTheta() + Math.toRadians(15));
+        switch (key) {
+            case 37:
+                gameState.setTheta(gameState.getTheta() - Math.toRadians(45));
+                break;
+            case 39:
+                gameState.setTheta(gameState.getTheta() + Math.toRadians(45));
+                break;
+            case 107:
+                gameState.setVelocity(gameState.getVelocity() + 10);
+                break;
+            case 109:
+                gameState.setVelocity(gameState.getVelocity() - 10);
+                break;
         }
-        if (key == 37) {
-            gameState.setTheta(gameState.getTheta() - Math.toRadians(15));
-        }
-
     }
 }

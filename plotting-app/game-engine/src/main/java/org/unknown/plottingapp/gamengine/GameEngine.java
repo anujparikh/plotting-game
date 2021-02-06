@@ -12,8 +12,8 @@ public class GameEngine {
     private final PhysicsEngine physicsEngine;
 
     public GameEngine() {
-        this.renderDelay = 10;
-        this.gameState = new GameState(150, 150, Math.toRadians(0), 100);
+        this.renderDelay = 100;
+        this.gameState = new GameState(150, 150, Math.toRadians(0));
         this.adapter = new KeyCommandAdapter(this.gameState);
         this.physicsEngine = new PhysicsEngine(this.gameState, renderDelay, 1000, 1000);
     }

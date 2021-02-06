@@ -6,11 +6,10 @@ public class GameState {
     private double theta;
     private double velocity;
 
-    public GameState(int x, int y, double theta, double velocity) {
+    public GameState(int x, int y, double theta) {
         this.x = x;
         this.y = y;
         this.theta = theta;
-        this.velocity = velocity;
     }
 
     public synchronized double getVelocity() {
