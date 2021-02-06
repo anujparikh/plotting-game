@@ -4,11 +4,21 @@ public class GameState {
     private int x;
     private int y;
     private double theta;
+    private double velocity;
 
-    public GameState(int x, int y, double theta) {
+    public GameState(int x, int y, double theta, double velocity) {
         this.x = x;
         this.y = y;
         this.theta = theta;
+        this.velocity = velocity;
+    }
+
+    public synchronized double getVelocity() {
+        return velocity;
+    }
+
+    public synchronized void setVelocity(double velocity) {
+        this.velocity = velocity;
     }
 
     public synchronized int getX() {
@@ -17,6 +27,14 @@ public class GameState {
 
     public synchronized void setX(int x) {
         this.x = x;
+    }
+
+    @Override
+    public String toString() {
+        return "GameState{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
     }
 
     public synchronized int getY() {

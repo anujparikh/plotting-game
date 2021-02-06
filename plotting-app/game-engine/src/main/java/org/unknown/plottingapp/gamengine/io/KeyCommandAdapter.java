@@ -20,10 +20,10 @@ public class KeyCommandAdapter extends KeyAdapter {
         int key = e.getKeyCode();
 
         if (key == 39) {
-            gameState.setTheta(gameState.getTheta() + Math.toRadians(30));
+            gameState.setTheta(gameState.getTheta() + Math.toRadians(15));
         }
         if (key == 37) {
-            gameState.setTheta(gameState.getTheta() - Math.toRadians(30));
+            gameState.setTheta(gameState.getTheta() - Math.toRadians(15));
         }
 
     }
