@@ -2,6 +2,7 @@ package org.unknown.plottingapp.gamengine.rendering;
 
 
 import org.unknown.plottingapp.gamengine.datatypes.GameState;
+import org.unknown.plottingapp.gamengine.io.KeyCommandAdapter;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -15,18 +16,18 @@ import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.net.URL;
 
 public class GraphicsPanel extends JPanel implements ActionListener {
 
 
     private final GameState gameState;
+    private final KeyCommandAdapter adapter;
     private Image shipImage;
 
-    public GraphicsPanel(int frameWidth, int frameHeight, int delay, GameState gameState) {
+    public GraphicsPanel(int frameWidth, int frameHeight, int delay, GameState gameState, KeyCommandAdapter adapter) {
         this.gameState = gameState;
+        this.adapter = adapter;
         Timer timer = new Timer(delay, this);
         initPanel(frameWidth, frameHeight, timer);
     }
@@ -55,7 +56,7 @@ public class GraphicsPanel extends JPanel implements ActionListener {
     }
 
     private void initPanel(int frameWidth, int frameHeight, Timer timer) {
-        addKeyListener(new KeyCommandAdapter());
+        addKeyListener(this.adapter);
         setMinimumSize(new Dimension(frameWidth, frameHeight));
         setLayout(null);
         setBackground(Color.black);
@@ -68,23 +69,5 @@ public class GraphicsPanel extends JPanel implements ActionListener {
         URL resource = this.getClass().getResource("/assets/ship.png");
         this.shipImage = new ImageIcon(resource.getPath()).getImage();
     }
-
-    private class KeyCommandAdapter extends KeyAdapter {
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-
-            int key = e.getKeyCode();
-
-            if (key == 39) {
-                gameState.setTheta(gameState.getTheta() + Math.toRadians(30));
-            }
-            if (key == 37) {
-                gameState.setTheta(gameState.getTheta() - Math.toRadians(30));
-            }
-
-        }
-    }
-
 
 }
