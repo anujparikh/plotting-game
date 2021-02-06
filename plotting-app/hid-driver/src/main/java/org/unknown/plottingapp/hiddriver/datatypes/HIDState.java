@@ -1,4 +1,4 @@
-package org.unknown.plottingapp.hiddriver.models;
+package org.unknown.plottingapp.hiddriver.datatypes;
 
 public class HIDState {
     private StickPosition leftLR;

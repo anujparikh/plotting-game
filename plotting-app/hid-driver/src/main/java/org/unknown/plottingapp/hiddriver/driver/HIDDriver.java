@@ -3,7 +3,7 @@ package org.unknown.plottingapp.hiddriver.driver;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
-import org.unknown.plottingapp.hiddriver.models.HIDState;
+import org.unknown.plottingapp.hiddriver.datatypes.HIDState;
 
 import java.util.ArrayList;
 import java.util.Arrays;
