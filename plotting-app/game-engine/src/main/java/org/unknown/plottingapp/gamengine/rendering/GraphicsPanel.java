@@ -2,7 +2,7 @@ package org.unknown.plottingapp.gamengine.rendering;
 
 
 import org.unknown.plottingapp.gamengine.datatypes.GameState;
-import org.unknown.plottingapp.gamengine.io.KeyCommandAdapter;
+import org.unknown.plottingapp.gamengine.io.CommandAdapter;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
@@ -22,10 +22,10 @@ public class GraphicsPanel extends JPanel implements ActionListener {
 
 
     private final GameState gameState;
-    private final KeyCommandAdapter adapter;
+    private final CommandAdapter adapter;
     private Image shipImage;
 
-    public GraphicsPanel(int frameWidth, int frameHeight, int delay, GameState gameState, KeyCommandAdapter adapter) {
+    public GraphicsPanel(int frameWidth, int frameHeight, int delay, GameState gameState, CommandAdapter adapter) {
         this.gameState = gameState;
         this.adapter = adapter;
         Timer timer = new Timer(delay, this);

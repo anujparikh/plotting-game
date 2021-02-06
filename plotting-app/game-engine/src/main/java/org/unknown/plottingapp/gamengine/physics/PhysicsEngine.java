@@ -8,8 +8,8 @@ public class PhysicsEngine implements Runnable {
     private final int delay;
     private final int mapWidth;
     private final int mapHeight;
-    private final float MAX_VEL = 50;
-    private final float MIN_VEL = 10;
+    private final float MAX_VEL = 100;
+    private final float MIN_VEL = 0;
 
 
     public PhysicsEngine(GameState gameState, int delay, int mapWidth, int mapHeight) {

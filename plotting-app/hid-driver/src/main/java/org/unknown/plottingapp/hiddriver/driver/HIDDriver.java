@@ -15,12 +15,12 @@ public class HIDDriver implements Runnable {
 
     private final StringBuilder stringBuilder;
     private final List<String> messageBuffer;
-    private final int delay;
+    private final int samplingDelay;
     private final HIDState hidState;
     private Consumer<HIDState> subscriber;
 
-    public HIDDriver(int delay) {
-        this.delay = delay;
+    public HIDDriver(int samplingDelay) {
+        this.samplingDelay = samplingDelay;
         this.stringBuilder = new StringBuilder();
         this.messageBuffer = new ArrayList<>(1);
         this.hidState = new HIDState();
@@ -58,7 +58,7 @@ public class HIDDriver implements Runnable {
             try {
                 setHidState();
                 this.subscriber.accept(this.hidState);
-                Thread.sleep(this.delay);
+                Thread.sleep(this.samplingDelay);
             } catch (IndexOutOfBoundsException | NumberFormatException | InterruptedException | NullPointerException e) {
                 // @pass
             }
