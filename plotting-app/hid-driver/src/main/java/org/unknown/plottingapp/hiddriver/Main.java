@@ -5,7 +5,7 @@ import org.unknown.plottingapp.hiddriver.driver.HIDDriver;
 public class Main {
 
     public static void main(String[] args) {
-        HIDDriver driver = new HIDDriver(10);
+        HIDDriver driver = new HIDDriver(10, 100);
         driver.init();
         driver.subscribe(System.out::println);
         Thread thread = new Thread(driver);
