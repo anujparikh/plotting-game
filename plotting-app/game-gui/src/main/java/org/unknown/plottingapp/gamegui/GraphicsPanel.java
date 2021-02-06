@@ -6,6 +6,7 @@ import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,7 +33,14 @@ public class GraphicsPanel extends JPanel implements ActionListener {
     }
 
     private void drawPanel(Graphics graphics) {
-        graphics.drawImage(this.shipImage, 100, 100, this);
+        Graphics2D g2d = (Graphics2D)graphics;
+        int x_center = 100 + (this.shipImage.getWidth(this) / 2);
+        int y_center = 100 + (this.shipImage.getHeight(this) / 2);
+        g2d.rotate(Math.toRadians(45), x_center, y_center);
+        g2d.drawImage(this.shipImage, 100, 100, this);
+        g2d.rotate(Math.toRadians(-45), x_center, y_center);
+        g2d.drawImage(this.shipImage, 100, 200, this);
+
     }
 
     private void initPanel(int frameWidth, int frameHeight) {
