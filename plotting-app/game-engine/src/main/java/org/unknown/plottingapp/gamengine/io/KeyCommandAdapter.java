@@ -1,7 +1,6 @@
 package org.unknown.plottingapp.gamengine.io;
 
 import org.unknown.plottingapp.gamengine.datatypes.GameState;
-import org.unknown.plottingapp.gamengine.rendering.GraphicsPanel;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -9,10 +8,10 @@ import java.awt.event.KeyEvent;
 public class KeyCommandAdapter extends KeyAdapter {
 
     private final GameState gameState;
-    private double turnRate;
-    private double acceleration;
+    private final float turnRate;
+    private final float acceleration;
 
-    public KeyCommandAdapter(GameState gameState, double turnRate, double acceleration) {
+    public KeyCommandAdapter(GameState gameState, float turnRate, float acceleration) {
         this.gameState = gameState;
         this.turnRate = turnRate;
         this.acceleration = acceleration;
@@ -25,10 +24,10 @@ public class KeyCommandAdapter extends KeyAdapter {
 
         switch (key) {
             case 37:
-                gameState.setTheta(gameState.getTheta() - Math.toRadians(turnRate));
+                gameState.setTheta(gameState.getTheta() - (float) Math.toRadians(turnRate));
                 break;
             case 39:
-                gameState.setTheta(gameState.getTheta() + Math.toRadians(turnRate));
+                gameState.setTheta(gameState.getTheta() + (float) Math.toRadians(turnRate));
                 break;
             case 107:
                 gameState.setVelocity(gameState.getVelocity() + acceleration);

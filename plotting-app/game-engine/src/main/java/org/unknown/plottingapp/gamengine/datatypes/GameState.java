@@ -1,30 +1,30 @@
 package org.unknown.plottingapp.gamengine.datatypes;
 
 public class GameState {
-    private int x;
-    private int y;
-    private double theta;
-    private double velocity;
+    private float x;
+    private float y;
+    private float theta;
+    private float velocity;
 
-    public GameState(int x, int y, double theta) {
+    public GameState(float x, float y, float theta) {
         this.x = x;
         this.y = y;
         this.theta = theta;
     }
 
-    public synchronized double getVelocity() {
+    public synchronized float getVelocity() {
         return velocity;
     }
 
-    public synchronized void setVelocity(double velocity) {
+    public synchronized void setVelocity(float velocity) {
         this.velocity = velocity;
     }
 
-    public synchronized int getX() {
+    public synchronized float getX() {
         return x;
     }
 
-    public synchronized void setX(int x) {
+    public synchronized void setX(float x) {
         this.x = x;
     }
 
@@ -36,19 +36,19 @@ public class GameState {
                 '}';
     }
 
-    public synchronized int getY() {
+    public synchronized float getY() {
         return y;
     }
 
-    public synchronized void setY(int y) {
+    public synchronized void setY(float y) {
         this.y = y;
     }
 
-    public synchronized double getTheta() {
+    public synchronized float getTheta() {
         return theta;
     }
 
-    public synchronized void setTheta(double theta) {
+    public synchronized void setTheta(float theta) {
         this.theta = theta;
     }
 }
