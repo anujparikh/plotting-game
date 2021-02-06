@@ -10,7 +10,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>hid-driver</module>
-        <module>game-gui</module>
+        <module>game-engine</module>
     </modules>
 
     <properties>
