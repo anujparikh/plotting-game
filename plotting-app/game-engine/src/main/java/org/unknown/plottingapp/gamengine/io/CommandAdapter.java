@@ -50,9 +50,11 @@ public class CommandAdapter extends KeyAdapter {
             case 39:
                 gameState.setTheta(gameState.getTheta() + (float) Math.toRadians(turnRate));
                 break;
+            case 61:
             case 107:
                 gameState.setVelocity(gameState.getVelocity() + acceleration);
                 break;
+            case 45:
             case 109:
                 gameState.setVelocity(gameState.getVelocity() - acceleration);
                 break;
