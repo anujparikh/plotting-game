@@ -9,9 +9,13 @@ import java.awt.event.KeyEvent;
 public class KeyCommandAdapter extends KeyAdapter {
 
     private final GameState gameState;
+    private double turnRate;
+    private double acceleration;
 
-    public KeyCommandAdapter(GameState gameState) {
+    public KeyCommandAdapter(GameState gameState, double turnRate, double acceleration) {
         this.gameState = gameState;
+        this.turnRate = turnRate;
+        this.acceleration = acceleration;
     }
 
     @Override
@@ -21,16 +25,16 @@ public class KeyCommandAdapter extends KeyAdapter {
 
         switch (key) {
             case 37:
-                gameState.setTheta(gameState.getTheta() - Math.toRadians(45));
+                gameState.setTheta(gameState.getTheta() - Math.toRadians(turnRate));
                 break;
             case 39:
-                gameState.setTheta(gameState.getTheta() + Math.toRadians(45));
+                gameState.setTheta(gameState.getTheta() + Math.toRadians(turnRate));
                 break;
             case 107:
-                gameState.setVelocity(gameState.getVelocity() + 10);
+                gameState.setVelocity(gameState.getVelocity() + acceleration);
                 break;
             case 109:
-                gameState.setVelocity(gameState.getVelocity() - 10);
+                gameState.setVelocity(gameState.getVelocity() - acceleration);
                 break;
         }
     }

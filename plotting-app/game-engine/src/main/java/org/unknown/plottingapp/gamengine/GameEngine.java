@@ -6,6 +6,10 @@ import org.unknown.plottingapp.gamengine.physics.PhysicsEngine;
 import org.unknown.plottingapp.gamengine.rendering.GraphicsFrame;
 
 public class GameEngine {
+    public static final int TURN_RATE = 45;
+    public static final int ACCELERATION = 10;
+    public static final int MAP_WIDTH = 1000;
+    public static final int MAP_HEIGHT = 1000;
     private final int renderDelay;
     private final GameState gameState;
     private final KeyCommandAdapter adapter;
@@ -14,8 +18,8 @@ public class GameEngine {
     public GameEngine() {
         this.renderDelay = 100;
         this.gameState = new GameState(150, 150, Math.toRadians(0));
-        this.adapter = new KeyCommandAdapter(this.gameState);
-        this.physicsEngine = new PhysicsEngine(this.gameState, renderDelay, 1000, 1000);
+        this.adapter = new KeyCommandAdapter(this.gameState, TURN_RATE, ACCELERATION);
+        this.physicsEngine = new PhysicsEngine(this.gameState, renderDelay, MAP_WIDTH, MAP_HEIGHT);
     }
 
     public void start() {
