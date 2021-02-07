@@ -20,14 +20,16 @@ import java.net.URL;
 
 public class GraphicsPanel extends JPanel implements ActionListener {
 
-
     private final GameState gameState;
     private final CommandAdapter adapter;
+    private final boolean isHistoryPlotEnabled;
     private Image shipImage;
 
-    public GraphicsPanel(int frameWidth, int frameHeight, int delay, GameState gameState, CommandAdapter adapter) {
+    public GraphicsPanel(int frameWidth, int frameHeight, int delay, GameState gameState, CommandAdapter adapter,
+                         boolean isHistoryPlotEnabled) {
         this.gameState = gameState;
         this.adapter = adapter;
+        this.isHistoryPlotEnabled = isHistoryPlotEnabled;
         Timer timer = new Timer(delay, this);
         initPanel(frameWidth, frameHeight, timer);
     }
@@ -46,15 +48,20 @@ public class GraphicsPanel extends JPanel implements ActionListener {
 
     private void drawPanel(Graphics graphics) {
         Graphics2D g2d = (Graphics2D) graphics;
-        int x_center = Math.round(this.gameState.getCurrentPosition().getX())
+        int x_center = Math.round(this.gameState.getCurrentPosition().x)
                 + (this.shipImage.getWidth(this) / 2);
-        int y_center = Math.round(this.gameState.getCurrentPosition().getY())
+        int y_center = Math.round(this.gameState.getCurrentPosition().y)
                 + (this.shipImage.getHeight(this) / 2);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.rotate(this.gameState.getTheta(), x_center, y_center);
-        g2d.drawImage(this.shipImage, Math.round(this.gameState.getCurrentPosition().getX()),
-                Math.round(this.gameState.getCurrentPosition().getY()), this);
+        g2d.drawImage(this.shipImage, Math.round(this.gameState.getCurrentPosition().x),
+                Math.round(this.gameState.getCurrentPosition().y), this);
         g2d.rotate(-this.gameState.getTheta(), x_center, y_center);
+        g2d.setColor(Color.orange);
+        if (this.isHistoryPlotEnabled) {
+            this.gameState.getPositionHistory().forEach(
+                    position -> g2d.drawOval((int)position.x,(int)position.y, 5, 5));
+        }
         g2d.dispose();
     }
 

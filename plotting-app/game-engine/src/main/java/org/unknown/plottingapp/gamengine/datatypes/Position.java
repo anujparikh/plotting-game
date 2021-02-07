@@ -1,27 +1,16 @@
 package org.unknown.plottingapp.gamengine.datatypes;
 
 public class Position {
-    private float x;
-    private float y;
+    public float x;
+    public float y;
 
     public Position(float x, float y) {
         this.x = x;
         this.y = y;
     }
 
-    public float getX() {
-        return x;
-    }
-
-    public void setX(float x) {
-        this.x = x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public void setY(float y) {
-        this.y = y;
+    public Position(Position p) {
+        this.x = p.x;
+        this.y = p.y;
     }
 }
