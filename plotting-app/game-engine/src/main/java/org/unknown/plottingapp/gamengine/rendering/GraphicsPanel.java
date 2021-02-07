@@ -60,7 +60,10 @@ public class GraphicsPanel extends JPanel implements ActionListener {
         g2d.setColor(Color.orange);
         if (this.isHistoryPlotEnabled) {
             this.gameState.getPositionHistory().forEach(
-                    position -> g2d.drawOval((int)position.x,(int)position.y, 5, 5));
+                    position -> g2d.drawOval(
+                            Math.round(position.x)  + (this.shipImage.getWidth(this) / 2),
+                            Math.round(position.y) + (this.shipImage.getHeight(this) / 2),
+                            5, 5));
         }
         g2d.dispose();
     }
