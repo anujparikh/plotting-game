@@ -37,8 +37,8 @@ public class PhysicsEngine implements Runnable {
         float xDist = this.gameState.getVelocity() * (float) Math.sin(this.gameState.getTheta()) * (delay / 1000.0F);
         float yDist = -this.gameState.getVelocity() * (float) Math.cos(this.gameState.getTheta()) * (delay / 1000.0F);
 
-        gameState.setX(wrap(gameState.getX() + xDist, this.mapWidth));
-        gameState.setY(wrap(gameState.getY() + yDist, this.mapHeight));
+        gameState.setLocation(wrap(gameState.getCurrentPosition().x + xDist, this.mapWidth),
+                wrap(gameState.getCurrentPosition().y + yDist, this.mapHeight));
     }
 
     private float wrap(float x, float lim) {

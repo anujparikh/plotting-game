@@ -1,14 +1,20 @@
 package org.unknown.plottingapp.gamengine.datatypes;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class GameState {
-    private float x;
-    private float y;
+    private final Position currentPosition;
+    private final List<Position> positionHistory;
+    private final int maxHistoryBufferSize;
     private float theta;
     private float velocity;
 
-    public GameState(float x, float y, float theta) {
-        this.x = x;
-        this.y = y;
+    public GameState(float x, float y, float theta, int maxHistoryBufferSize) {
+        this.currentPosition = new Position(x, y);
+        this.maxHistoryBufferSize = maxHistoryBufferSize;
+        this.positionHistory = Collections.synchronizedList(new ArrayList<>());
         this.theta = theta;
     }
 
@@ -20,28 +26,21 @@ public class GameState {
         this.velocity = velocity;
     }
 
-    public synchronized float getX() {
-        return x;
+    public synchronized void setLocation(float x, float y) {
+        this.currentPosition.x = x;
+        this.currentPosition.y = y;
+        this.positionHistory.add(new Position(this.currentPosition));
+        if (this.positionHistory.size() > this.maxHistoryBufferSize) {
+            this.positionHistory.remove(0);
+        }
     }
 
-    public synchronized void setX(float x) {
-        this.x = x;
+    public Position getCurrentPosition() {
+        return currentPosition;
     }
 
-    @Override
-    public String toString() {
-        return "GameState{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
-    }
-
-    public synchronized float getY() {
-        return y;
-    }
-
-    public synchronized void setY(float y) {
-        this.y = y;
+    public List<Position> getPositionHistory() {
+        return positionHistory;
     }
 
     public synchronized float getTheta() {

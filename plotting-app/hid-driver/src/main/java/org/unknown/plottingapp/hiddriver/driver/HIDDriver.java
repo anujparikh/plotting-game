@@ -19,6 +19,7 @@ public class HIDDriver implements Runnable {
     private final int publishDelay;
     private final HIDState hidState;
     private Consumer<HIDState> subscriber;
+    private boolean initialized;
 
     public HIDDriver(int samplingDelay, int publishDelay) {
         this.samplingDelay = samplingDelay;
@@ -29,25 +30,29 @@ public class HIDDriver implements Runnable {
     }
 
     public void init() {
-        SerialPort compPort = SerialPort.getCommPorts()[0];
-        compPort.openPort();
-        SerialPortDataListener serialPortDataListener = new SerialPortDataListener() {
-            @Override
-            public int getListeningEvents() {
-                return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
-            }
+        SerialPort[] commPorts = SerialPort.getCommPorts();
+        if (commPorts.length > 0) {
+            SerialPort compPort = commPorts[0];
+            compPort.openPort();
+            SerialPortDataListener serialPortDataListener = new SerialPortDataListener() {
+                @Override
+                public int getListeningEvents() {
+                    return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
+                }
 
-            @Override
-            public void serialEvent(SerialPortEvent event) {
-                if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE)
-                    return;
-                byte[] newData = new byte[compPort.bytesAvailable()];
-                compPort.readBytes(newData, newData.length);
-                parse(newData);
+                @Override
+                public void serialEvent(SerialPortEvent event) {
+                    if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE)
+                        return;
+                    byte[] newData = new byte[compPort.bytesAvailable()];
+                    compPort.readBytes(newData, newData.length);
+                    parse(newData);
 
-            }
-        };
-        compPort.addDataListener(serialPortDataListener);
+                }
+            };
+            compPort.addDataListener(serialPortDataListener);
+            initialized = true;
+        }
     }
 
     public void subscribe(Consumer<HIDState> subscriber) {
@@ -57,10 +62,10 @@ public class HIDDriver implements Runnable {
     @Override
     public void run() {
         int elapsedTime = 0;
-        while (true) {
+        while (initialized) {
             try {
                 setHidState();
-                if (elapsedTime >= publishDelay) {
+                if (elapsedTime >= publishDelay && this.subscriber != null) {
                     this.subscriber.accept(this.hidState);
                 }
                 Thread.sleep(this.samplingDelay);
