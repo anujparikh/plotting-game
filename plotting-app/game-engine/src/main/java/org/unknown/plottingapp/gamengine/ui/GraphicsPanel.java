@@ -1,4 +1,4 @@
-package org.unknown.plottingapp.gamengine.rendering;
+package org.unknown.plottingapp.gamengine.ui;
 
 
 import org.unknown.plottingapp.gamengine.datatypes.GameState;
@@ -61,7 +61,7 @@ public class GraphicsPanel extends JPanel implements ActionListener {
         if (this.isHistoryPlotEnabled) {
             this.gameState.getPositionHistory().forEach(
                     position -> g2d.drawOval(
-                            Math.round(position.x)  + (this.shipImage.getWidth(this) / 2),
+                            Math.round(position.x) + (this.shipImage.getWidth(this) / 2),
                             Math.round(position.y) + (this.shipImage.getHeight(this) / 2),
                             5, 5));
         }

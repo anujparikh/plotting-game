@@ -18,6 +18,16 @@ public class GameState {
         this.theta = theta;
     }
 
+    @Override
+    public String toString() {
+        return "GameState[" +
+                "x=" + currentPosition.x +
+                ", y=" + currentPosition.y +
+                ", theta=" + theta +
+                ", velocity=" + velocity +
+                ']';
+    }
+
     public synchronized float getVelocity() {
         return velocity;
     }
