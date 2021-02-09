@@ -1,4 +1,4 @@
-package org.unknown.plottingapp.gamengine.rendering;
+package org.unknown.plottingapp.gamengine.ui;
 
 import org.unknown.plottingapp.gamengine.datatypes.GameState;
 import org.unknown.plottingapp.gamengine.io.CommandAdapter;

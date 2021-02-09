@@ -3,7 +3,7 @@ package org.unknown.plottingapp.gamengine;
 import org.unknown.plottingapp.gamengine.datatypes.GameState;
 import org.unknown.plottingapp.gamengine.io.CommandAdapter;
 import org.unknown.plottingapp.gamengine.physics.PhysicsEngine;
-import org.unknown.plottingapp.gamengine.rendering.GraphicsFrame;
+import org.unknown.plottingapp.gamengine.ui.GraphicsFrame;
 import org.unknown.plottingapp.hiddriver.driver.HIDDriver;
 
 public class GameEngine {
