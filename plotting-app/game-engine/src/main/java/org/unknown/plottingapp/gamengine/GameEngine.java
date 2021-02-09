@@ -1,10 +1,13 @@
 package org.unknown.plottingapp.gamengine;
 
+import org.unknown.plottingapp.gamengine.logging.GameLogger;
 import org.unknown.plottingapp.gamengine.datatypes.GameState;
 import org.unknown.plottingapp.gamengine.io.CommandAdapter;
 import org.unknown.plottingapp.gamengine.physics.PhysicsEngine;
 import org.unknown.plottingapp.gamengine.ui.GraphicsFrame;
 import org.unknown.plottingapp.hiddriver.driver.HIDDriver;
+
+import java.util.logging.Level;
 
 public class GameEngine {
     private static final String title = "Course Plotter v0.1";
@@ -19,6 +22,7 @@ public class GameEngine {
     private final CommandAdapter commandAdapter;
     private final PhysicsEngine physicsEngine;
     private final HIDDriver hidDriver;
+    private final GameLogger gameLogger;
 
     public GameEngine() {
         this.renderDelay = 100;
@@ -27,13 +31,16 @@ public class GameEngine {
         this.commandAdapter = new CommandAdapter(this.gameState, TURN_RATE, ACCELERATION);
         this.physicsEngine = new PhysicsEngine(this.gameState, renderDelay, MAP_WIDTH, MAP_HEIGHT);
         this.hidDriver = createHIDDeviceDriver();
+        this.gameLogger = new GameLogger();
     }
 
     public void start() {
         Thread engineThread = new Thread(this.physicsEngine);
         Thread hidDriverThread = new Thread(this.hidDriver);
+        Thread loggingThread = new Thread(createLogWorker());
         engineThread.start();
         hidDriverThread.start();
+        loggingThread.start();
     }
 
     public static void main(String[] args) {
@@ -52,5 +59,22 @@ public class GameEngine {
         driver.init();
         driver.subscribe(this.commandAdapter::hidCommandHandler);
         return driver;
+    }
+
+    private Runnable createLogWorker() {
+        return new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        gameLogger.log(Level.INFO, gameState);
+                        Thread.sleep(renderDelay);
+                    } catch (InterruptedException e) {
+                        gameLogger.log(Level.SEVERE, e.getMessage());
+                    }
+                }
+            }
+        };
+
     }
 }
