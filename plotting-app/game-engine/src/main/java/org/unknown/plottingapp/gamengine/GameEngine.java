@@ -46,13 +46,11 @@ public class GameEngine {
     public void start(String sessionName) throws GameAlreadyStartedException {
         Thread engineThread = new Thread(this.physicsEngine);
         Thread hidDriverThread = new Thread(this.hidDriver);
-        Thread loggingThread = new Thread(createLogWorker());
-        Thread gameStateRecordingThread = new Thread(createGameStateRecordingWorker());
+        Thread gameStateLoggingThread = new Thread(createGameStateLoggingWorker());
         gameRecorder.startSession(sessionName);
         engineThread.start();
         hidDriverThread.start();
-        loggingThread.start();
-        gameStateRecordingThread.start();
+        gameStateLoggingThread.start();
     }
 
     public static void main(String[] args) throws GameNotStartedException {
@@ -83,23 +81,11 @@ public class GameEngine {
         return driver;
     }
 
-    private Runnable createLogWorker() {
+    private Runnable createGameStateLoggingWorker() {
         return () -> {
             while (true) {
                 try {
                     gameLogger.log(Level.INFO, gameState);
-                    Thread.sleep(renderDelay);
-                } catch (InterruptedException e) {
-                    gameLogger.log(Level.SEVERE, e.getMessage());
-                }
-            }
-        };
-    }
-
-    private Runnable createGameStateRecordingWorker() {
-        return () -> {
-            while (true) {
-                try {
                     gameRecorder.addRecord(GameStateConvertorUtil.convertToGameRecord(this.gameState));
                     Thread.sleep(renderDelay);
                 } catch (InterruptedException | GameNotStartedException e) {
