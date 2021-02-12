@@ -7,7 +7,7 @@ import org.unknown.plottingapp.gamengine.physics.PhysicsEngine;
 import org.unknown.plottingapp.gamengine.ui.GraphicsFrame;
 import org.unknown.plottingapp.gamengine.utils.GameStateConvertorUtil;
 import org.unknown.plottingapp.hiddriver.driver.HIDDriver;
-import org.unknown.plottingengine.gamerecorder.GameRecorder;
+import org.unknown.plottingengine.gamerecorder.services.GameRecordingService;
 import org.unknown.plottingengine.gamerecorder.exceptions.GameAlreadyStartedException;
 import org.unknown.plottingengine.gamerecorder.exceptions.GameNotStartedException;
 
@@ -30,7 +30,7 @@ public class GameEngine {
     private final PhysicsEngine physicsEngine;
     private final HIDDriver hidDriver;
     private final GameLogger gameLogger;
-    private final GameRecorder gameRecorder;
+    private final GameRecordingService gameRecordingService;
 
     public GameEngine() {
         this.renderDelay = 100;
@@ -40,14 +40,14 @@ public class GameEngine {
         this.physicsEngine = new PhysicsEngine(this.gameState, renderDelay, MAP_WIDTH, MAP_HEIGHT);
         this.hidDriver = createHIDDeviceDriver();
         this.gameLogger = new GameLogger();
-        this.gameRecorder = GameRecorder.getInstance();
+        this.gameRecordingService = new GameRecordingService();
     }
 
     public void start(String sessionName) throws GameAlreadyStartedException {
         Thread engineThread = new Thread(this.physicsEngine);
         Thread hidDriverThread = new Thread(this.hidDriver);
         Thread gameStateLoggingThread = new Thread(createGameStateLoggingWorker());
-        gameRecorder.startSession(sessionName);
+        gameRecordingService.startSession(sessionName);
         engineThread.start();
         hidDriverThread.start();
         gameStateLoggingThread.start();
@@ -57,7 +57,7 @@ public class GameEngine {
         GameEngine gameEngine = new GameEngine();
         String title = titlePrefix + "_" + LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         Callable<Void> onDisposeHandler = () -> {
-            gameEngine.gameRecorder.endSession();
+            gameEngine.gameRecordingService.endSession();
             return null;
         };
         try {
@@ -70,7 +70,7 @@ public class GameEngine {
             gameEngine.start(title);
         } catch (Exception e) {
             gameEngine.gameLogger.log(Level.SEVERE, e.getMessage());
-            gameEngine.gameRecorder.endSession();
+            gameEngine.gameRecordingService.endSession();
         }
     }
 
@@ -86,7 +86,7 @@ public class GameEngine {
             while (true) {
                 try {
                     gameLogger.log(Level.INFO, gameState);
-                    gameRecorder.addRecord(GameStateConvertorUtil.convertToGameRecord(this.gameState));
+                    gameRecordingService.addRecord(GameStateConvertorUtil.convertToGameRecord(this.gameState));
                     Thread.sleep(renderDelay);
                 } catch (InterruptedException | GameNotStartedException e) {
                     gameLogger.log(Level.SEVERE, e.getMessage());
