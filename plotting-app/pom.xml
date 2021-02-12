@@ -11,6 +11,7 @@
     <modules>
         <module>hid-driver</module>
         <module>game-engine</module>
+        <module>game-recorder</module>
     </modules>
 
     <properties>

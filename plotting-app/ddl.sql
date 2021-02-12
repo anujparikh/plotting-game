@@ -24,18 +24,3 @@ ALTER TABLE public."Records"
     OWNER to admin;
 
 -- Table: public.Records
-
--- DROP TABLE public."Sessions";
-
-CREATE TABLE public."Sessions"
-(
-    id bigserial PRIMARY KEY,
-	start_time timestamp default current_timestamp,
-	end_time timestamp,
-    title varchar(100)
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE public."Sessions"
-    OWNER to admin;
