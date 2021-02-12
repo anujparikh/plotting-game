@@ -14,6 +14,8 @@ import org.unknown.plottingengine.gamerecorder.exceptions.GameNotStartedExceptio
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 public class GameEngine {
@@ -30,6 +32,7 @@ public class GameEngine {
     private final PhysicsEngine physicsEngine;
     private final HIDDriver hidDriver;
     private final GameRecordingService gameRecordingService;
+    private final ExecutorService executorService;
     private static final Logger logger = Logger.getLogger(GameEngine.class.getName());
 
 
@@ -41,16 +44,14 @@ public class GameEngine {
         this.physicsEngine = new PhysicsEngine(this.gameState, renderDelay, MAP_WIDTH, MAP_HEIGHT);
         this.hidDriver = createHIDDeviceDriver();
         this.gameRecordingService = new GameRecordingService();
+        this.executorService = Executors.newFixedThreadPool(3);
     }
 
     public void start(String sessionName) throws GameAlreadyStartedException {
-        Thread engineThread = new Thread(this.physicsEngine);
-        Thread hidDriverThread = new Thread(this.hidDriver);
-        Thread gameStateLoggingThread = new Thread(createGameStateLoggingWorker());
         gameRecordingService.startSession(sessionName);
-        engineThread.start();
-        hidDriverThread.start();
-        gameStateLoggingThread.start();
+        executorService.submit(this.physicsEngine);
+        executorService.submit(this.hidDriver);
+        executorService.submit(createGameStateLoggingWorker());
     }
 
     public static void main(String[] args) throws GameNotStartedException {
