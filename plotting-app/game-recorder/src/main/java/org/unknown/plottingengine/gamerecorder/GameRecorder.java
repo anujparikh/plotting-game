@@ -2,6 +2,7 @@ package org.unknown.plottingengine.gamerecorder;
 
 import org.unknown.plottingengine.gamerecorder.exceptions.GameAlreadyStartedException;
 import org.unknown.plottingengine.gamerecorder.exceptions.GameNotStartedException;
+import org.unknown.plottingengine.gamerecorder.models.GameRecord;
 import org.unknown.plottingengine.gamerecorder.models.GameSession;
 
 import javax.persistence.EntityManager;
@@ -39,6 +40,19 @@ public class GameRecorder {
             EntityTransaction transaction = this.entityManager.getTransaction();
             transaction.begin();
             gameSession.setEndTime(Timestamp.valueOf(LocalDateTime.now()));
+            transaction.commit();
+            gameSession = null;
+        } else {
+            throw new GameNotStartedException();
+        }
+    }
+
+    public void addRecord(GameRecord record) throws GameNotStartedException {
+        if (gameSession != null) {
+            EntityTransaction transaction = this.entityManager.getTransaction();
+            transaction.begin();
+            record.setGameSession(gameSession);
+            this.entityManager.persist(record);
             transaction.commit();
         } else {
             throw new GameNotStartedException();

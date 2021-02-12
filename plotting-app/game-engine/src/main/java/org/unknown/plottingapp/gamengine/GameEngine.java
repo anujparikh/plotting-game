@@ -5,6 +5,7 @@ import org.unknown.plottingapp.gamengine.io.CommandAdapter;
 import org.unknown.plottingapp.gamengine.logging.GameLogger;
 import org.unknown.plottingapp.gamengine.physics.PhysicsEngine;
 import org.unknown.plottingapp.gamengine.ui.GraphicsFrame;
+import org.unknown.plottingapp.gamengine.utils.GameStateConvertorUtil;
 import org.unknown.plottingapp.hiddriver.driver.HIDDriver;
 import org.unknown.plottingengine.gamerecorder.GameRecorder;
 import org.unknown.plottingengine.gamerecorder.exceptions.GameAlreadyStartedException;
@@ -46,10 +47,12 @@ public class GameEngine {
         Thread engineThread = new Thread(this.physicsEngine);
         Thread hidDriverThread = new Thread(this.hidDriver);
         Thread loggingThread = new Thread(createLogWorker());
+        Thread gameStateRecordingThread = new Thread(createGameStateRecordingWorker());
         gameRecorder.startSession(sessionName);
         engineThread.start();
         hidDriverThread.start();
         loggingThread.start();
+        gameStateRecordingThread.start();
     }
 
     public static void main(String[] args) throws GameNotStartedException {
@@ -91,6 +94,18 @@ public class GameEngine {
                 }
             }
         };
+    }
 
+    private Runnable createGameStateRecordingWorker() {
+        return () -> {
+            while (true) {
+                try {
+                    gameRecorder.addRecord(GameStateConvertorUtil.convertToGameRecord(this.gameState));
+                    Thread.sleep(renderDelay);
+                } catch (InterruptedException | GameNotStartedException e) {
+                    gameLogger.log(Level.SEVERE, e.getMessage());
+                }
+            }
+        };
     }
 }
