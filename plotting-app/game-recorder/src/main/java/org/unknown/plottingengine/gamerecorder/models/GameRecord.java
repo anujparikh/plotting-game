@@ -18,9 +18,9 @@ public class GameRecord {
 
     private int y;
 
-    private double heading;
+    private double direction;
 
-    private double velocity;
+    private double speed;
 
     @ManyToOne
     @JoinColumn(name = "session_id")
@@ -50,20 +50,20 @@ public class GameRecord {
         this.y = y;
     }
 
-    public double getHeading() {
-        return heading;
+    public double getDirection() {
+        return direction;
     }
 
-    public void setHeading(double heading) {
-        this.heading = heading;
+    public void setDirection(double direction) {
+        this.direction = direction;
     }
 
-    public double getVelocity() {
-        return velocity;
+    public double getSpeed() {
+        return speed;
     }
 
-    public void setVelocity(double velocity) {
-        this.velocity = velocity;
+    public void setSpeed(double speed) {
+        this.speed = speed;
     }
 
     public GameSession getGameSession() {

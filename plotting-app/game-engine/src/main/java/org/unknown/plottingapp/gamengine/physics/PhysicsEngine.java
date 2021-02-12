@@ -36,9 +36,9 @@ public class PhysicsEngine implements Runnable {
 
     private void updateState() {
         // approximation below. Assume game tick is perfectly timed at an interval of size 'delay' milliseconds.
-        this.gameState.setVelocity(Math.min(Math.max(this.gameState.getVelocity(), MIN_VEL), MAX_VEL));
-        float xDist = this.gameState.getVelocity() * (float) Math.sin(this.gameState.getTheta()) * (delay / 1000.0F);
-        float yDist = -this.gameState.getVelocity() * (float) Math.cos(this.gameState.getTheta()) * (delay / 1000.0F);
+        this.gameState.setSpeed(Math.min(Math.max(this.gameState.getSpeed(), MIN_VEL), MAX_VEL));
+        float xDist = this.gameState.getSpeed() * (float) Math.sin(this.gameState.getDirection()) * (delay / 1000.0F);
+        float yDist = -this.gameState.getSpeed() * (float) Math.cos(this.gameState.getDirection()) * (delay / 1000.0F);
 
         gameState.setLocation(wrap(gameState.getCurrentPosition().x + xDist, this.mapWidth),
                 wrap(gameState.getCurrentPosition().y + yDist, this.mapHeight));

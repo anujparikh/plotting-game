@@ -8,14 +8,14 @@ public class GameState {
     private final Position currentPosition;
     private final List<Position> positionHistory;
     private final int maxHistoryBufferSize;
-    private float theta;
-    private float velocity;
+    private float direction;
+    private float speed;
 
-    public GameState(float x, float y, float theta, int maxHistoryBufferSize) {
+    public GameState(float x, float y, float direction, int maxHistoryBufferSize) {
         this.currentPosition = new Position(x, y);
         this.maxHistoryBufferSize = maxHistoryBufferSize;
         this.positionHistory = Collections.synchronizedList(new ArrayList<>());
-        this.theta = theta;
+        this.direction = direction;
     }
 
     @Override
@@ -23,17 +23,17 @@ public class GameState {
         return "GameState[" +
                 "x=" + currentPosition.x +
                 ", y=" + currentPosition.y +
-                ", theta=" + theta +
-                ", velocity=" + velocity +
+                ", direction=" + direction +
+                ", speed=" + speed +
                 ']';
     }
 
-    public synchronized float getVelocity() {
-        return velocity;
+    public synchronized float getSpeed() {
+        return speed;
     }
 
-    public synchronized void setVelocity(float velocity) {
-        this.velocity = velocity;
+    public synchronized void setSpeed(float speed) {
+        this.speed = speed;
     }
 
     public synchronized void setLocation(float x, float y) {
@@ -53,11 +53,11 @@ public class GameState {
         return positionHistory;
     }
 
-    public synchronized float getTheta() {
-        return theta;
+    public synchronized float getDirection() {
+        return direction;
     }
 
-    public synchronized void setTheta(float theta) {
-        this.theta = theta;
+    public synchronized void setDirection(float direction) {
+        this.direction = direction;
     }
 }

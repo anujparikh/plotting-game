@@ -53,10 +53,10 @@ public class GraphicsPanel extends JPanel implements ActionListener {
         int y_center = Math.round(this.gameState.getCurrentPosition().y)
                 + (this.shipImage.getHeight(this) / 2);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.rotate(this.gameState.getTheta(), x_center, y_center);
+        g2d.rotate(this.gameState.getDirection(), x_center, y_center);
         g2d.drawImage(this.shipImage, Math.round(this.gameState.getCurrentPosition().x),
                 Math.round(this.gameState.getCurrentPosition().y), this);
-        g2d.rotate(-this.gameState.getTheta(), x_center, y_center);
+        g2d.rotate(-this.gameState.getDirection(), x_center, y_center);
         g2d.setColor(Color.orange);
         if (this.isHistoryPlotEnabled) {
             this.gameState.getPositionHistory().forEach(

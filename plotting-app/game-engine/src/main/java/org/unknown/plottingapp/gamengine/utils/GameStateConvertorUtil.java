@@ -8,8 +8,8 @@ public class GameStateConvertorUtil {
         GameRecord gameRecord = new GameRecord();
         gameRecord.setX(Math.round(gameState.getCurrentPosition().x));
         gameRecord.setY(Math.round(gameState.getCurrentPosition().y));
-        gameRecord.setVelocity(gameState.getVelocity());
-        gameRecord.setHeading(gameState.getTheta());
+        gameRecord.setSpeed(gameState.getSpeed());
+        gameRecord.setDirection(gameState.getDirection());
         return gameRecord;
     }
 }
