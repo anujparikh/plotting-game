@@ -21,19 +21,19 @@ public class CommandAdapter extends KeyAdapter {
     public void hidCommandHandler(HIDState hidState) {
         switch (hidState.getRightLR()) {
             case LEFT:
-                gameState.setTheta(gameState.getTheta() - (float) Math.toRadians(turnRate));
+                gameState.setDirection(gameState.getDirection() - (float) Math.toRadians(turnRate));
                 break;
             case RIGHT:
-                gameState.setTheta(gameState.getTheta() + (float) Math.toRadians(turnRate));
+                gameState.setDirection(gameState.getDirection() + (float) Math.toRadians(turnRate));
                 break;
         }
 
         switch (hidState.getLeftUD()) {
             case UP:
-                gameState.setVelocity(gameState.getVelocity() + acceleration);
+                gameState.setSpeed(gameState.getSpeed() + acceleration);
                 break;
             case DOWN:
-                gameState.setVelocity(gameState.getVelocity() - acceleration);
+                gameState.setSpeed(gameState.getSpeed() - acceleration);
                 break;
         }
     }
@@ -45,18 +45,18 @@ public class CommandAdapter extends KeyAdapter {
 
         switch (key) {
             case 37:
-                gameState.setTheta(gameState.getTheta() - (float) Math.toRadians(turnRate));
+                gameState.setDirection(gameState.getDirection() - (float) Math.toRadians(turnRate));
                 break;
             case 39:
-                gameState.setTheta(gameState.getTheta() + (float) Math.toRadians(turnRate));
+                gameState.setDirection(gameState.getDirection() + (float) Math.toRadians(turnRate));
                 break;
             case 61:
             case 107:
-                gameState.setVelocity(gameState.getVelocity() + acceleration);
+                gameState.setSpeed(gameState.getSpeed() + acceleration);
                 break;
             case 45:
             case 109:
-                gameState.setVelocity(gameState.getVelocity() - acceleration);
+                gameState.setSpeed(gameState.getSpeed() - acceleration);
                 break;
         }
     }

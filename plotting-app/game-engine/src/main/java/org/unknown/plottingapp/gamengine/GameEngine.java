@@ -1,16 +1,25 @@
 package org.unknown.plottingapp.gamengine;
 
-import org.unknown.plottingapp.gamengine.logging.GameLogger;
 import org.unknown.plottingapp.gamengine.datatypes.GameState;
 import org.unknown.plottingapp.gamengine.io.CommandAdapter;
+import org.unknown.plottingapp.gamengine.logging.LoggerInitializer;
 import org.unknown.plottingapp.gamengine.physics.PhysicsEngine;
 import org.unknown.plottingapp.gamengine.ui.GraphicsFrame;
+import org.unknown.plottingapp.gamengine.utils.GameStateConvertorUtil;
 import org.unknown.plottingapp.hiddriver.driver.HIDDriver;
+import org.unknown.plottingengine.gamerecorder.services.GameRecordingService;
+import org.unknown.plottingengine.gamerecorder.exceptions.GameAlreadyStartedException;
+import org.unknown.plottingengine.gamerecorder.exceptions.GameNotStartedException;
 
-import java.util.logging.Level;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Logger;
 
 public class GameEngine {
-    private static final String title = "Course Plotter v0.1";
+    private static final String titlePrefix = "Course Plotter v0.1";
     private static final float TURN_RATE = 5;
     private static final float ACCELERATION = 10;
     private static final int MAP_WIDTH = 1000;
@@ -22,7 +31,10 @@ public class GameEngine {
     private final CommandAdapter commandAdapter;
     private final PhysicsEngine physicsEngine;
     private final HIDDriver hidDriver;
-    private final GameLogger gameLogger;
+    private final GameRecordingService gameRecordingService;
+    private final ExecutorService executorService;
+    private static final Logger logger = Logger.getLogger(GameEngine.class.getName());
+
 
     public GameEngine() {
         this.renderDelay = 100;
@@ -31,27 +43,37 @@ public class GameEngine {
         this.commandAdapter = new CommandAdapter(this.gameState, TURN_RATE, ACCELERATION);
         this.physicsEngine = new PhysicsEngine(this.gameState, renderDelay, MAP_WIDTH, MAP_HEIGHT);
         this.hidDriver = createHIDDeviceDriver();
-        this.gameLogger = new GameLogger();
+        this.gameRecordingService = new GameRecordingService();
+        this.executorService = Executors.newFixedThreadPool(3);
     }
 
-    public void start() {
-        Thread engineThread = new Thread(this.physicsEngine);
-        Thread hidDriverThread = new Thread(this.hidDriver);
-        Thread loggingThread = new Thread(createLogWorker());
-        engineThread.start();
-        hidDriverThread.start();
-        loggingThread.start();
+    public void start(String sessionName) throws GameAlreadyStartedException {
+        gameRecordingService.startSession(sessionName);
+        executorService.submit(this.physicsEngine);
+        executorService.submit(this.hidDriver);
+        executorService.submit(createGameStateLoggingWorker());
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws GameNotStartedException {
+        LoggerInitializer.initLogger();
         GameEngine gameEngine = new GameEngine();
-        GraphicsFrame mainFrame = new GraphicsFrame(gameEngine.gameState, gameEngine.commandAdapter,
-                gameEngine.renderDelay, title, false);
-        GraphicsFrame historyFrame = new GraphicsFrame(gameEngine.gameState, gameEngine.commandAdapter,
-                gameEngine.renderDelay, title + "_history", true);
-        mainFrame.setVisible(true);
-        historyFrame.setVisible(true);
-        gameEngine.start();
+        String title = titlePrefix + "_" + LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+        Callable<Void> onDisposeHandler = () -> {
+            gameEngine.gameRecordingService.endSession();
+            return null;
+        };
+        try {
+            GraphicsFrame mainFrame = new GraphicsFrame(gameEngine.gameState, gameEngine.commandAdapter,
+                    gameEngine.renderDelay, title, false, onDisposeHandler);
+            GraphicsFrame historyFrame = new GraphicsFrame(gameEngine.gameState, gameEngine.commandAdapter,
+                    gameEngine.renderDelay, title + "_history", true, onDisposeHandler);
+            mainFrame.setVisible(true);
+            historyFrame.setVisible(true);
+            gameEngine.start(title);
+        } catch (Exception e) {
+            logger.severe(e.getMessage());
+            gameEngine.gameRecordingService.endSession();
+        }
     }
 
     private HIDDriver createHIDDeviceDriver() {
@@ -61,20 +83,17 @@ public class GameEngine {
         return driver;
     }
 
-    private Runnable createLogWorker() {
-        return new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        gameLogger.log(Level.INFO, gameState);
-                        Thread.sleep(renderDelay);
-                    } catch (InterruptedException e) {
-                        gameLogger.log(Level.SEVERE, e.getMessage());
-                    }
+    private Runnable createGameStateLoggingWorker() {
+        return () -> {
+            while (true) {
+                try {
+                    logger.info(gameState.toString());
+                    gameRecordingService.addRecord(GameStateConvertorUtil.convertToGameRecord(this.gameState));
+                    Thread.sleep(renderDelay);
+                } catch (InterruptedException | GameNotStartedException e) {
+                    logger.severe(e.getMessage());
                 }
             }
         };
-
     }
 }
