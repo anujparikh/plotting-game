@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class HIDDriver implements Runnable {
@@ -20,6 +21,7 @@ public class HIDDriver implements Runnable {
     private final HIDState hidState;
     private Consumer<HIDState> subscriber;
     private boolean initialized;
+    private static final Logger logger = Logger.getLogger(HIDDriver.class.getName());
 
     public HIDDriver(int samplingDelay, int publishDelay) {
         this.samplingDelay = samplingDelay;
@@ -71,7 +73,7 @@ public class HIDDriver implements Runnable {
                 Thread.sleep(this.samplingDelay);
                 elapsedTime += this.samplingDelay;
             } catch (IndexOutOfBoundsException | NumberFormatException | InterruptedException | NullPointerException e) {
-                // @pass
+                logger.severe(e.getMessage());
             }
         }
     }

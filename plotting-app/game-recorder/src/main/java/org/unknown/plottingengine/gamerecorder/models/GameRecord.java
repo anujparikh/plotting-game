@@ -7,28 +7,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-/*
-*
-CREATE TABLE public."Records"
-(
-    id bigserial PRIMARY KEY,
-    x integer NOT NULL,
-    y integer NOT NULL,
-    velocity double precision NOT NULL,
-    heading double precision NOT NULL,
-	created_time timestamp default current_timestamp,
-    session_id bigint NOT NULL,
-    CONSTRAINT valid_session_id_constraint FOREIGN KEY (session_id)
-            REFERENCES public."Sessions" (id) MATCH SIMPLE
-            ON UPDATE NO ACTION
-            ON DELETE CASCADE
-            NOT VALID
-)
-
-*
-*
-* */
-
 @Entity
 @Table(name = "Records", schema = "public")
 public class GameRecord {

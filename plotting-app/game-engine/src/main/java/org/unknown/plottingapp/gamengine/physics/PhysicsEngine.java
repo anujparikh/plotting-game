@@ -2,8 +2,11 @@ package org.unknown.plottingapp.gamengine.physics;
 
 import org.unknown.plottingapp.gamengine.datatypes.GameState;
 
+import java.util.logging.Logger;
+
 public class PhysicsEngine implements Runnable {
 
+    private static final Logger logger = Logger.getLogger(PhysicsEngine.class.getName());
     private final GameState gameState;
     private final int delay;
     private final int mapWidth;
@@ -26,7 +29,7 @@ public class PhysicsEngine implements Runnable {
                 updateState();
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.severe(e.getMessage());
             }
         }
     }
