@@ -51,7 +51,9 @@ public class GameEngine {
         gameRecordingService.startSession(sessionName);
         executorService.submit(this.physicsEngine);
         executorService.submit(this.hidDriver);
-        executorService.submit(createGameStateLoggingWorker());
+        executorService.submit(
+                gameRecordingService.createGameStateLoggingWorker(this.renderDelay,
+                        ()-> GameStateConvertorUtil.convertToGameRecord(this.gameState)));
     }
 
     public static void main(String[] args) throws GameNotStartedException {
@@ -81,19 +83,5 @@ public class GameEngine {
         driver.init();
         driver.subscribe(this.commandAdapter::hidCommandHandler);
         return driver;
-    }
-
-    private Runnable createGameStateLoggingWorker() {
-        return () -> {
-            while (true) {
-                try {
-                    logger.info(gameState.toString());
-                    gameRecordingService.addRecord(GameStateConvertorUtil.convertToGameRecord(this.gameState));
-                    Thread.sleep(renderDelay);
-                } catch (InterruptedException | GameNotStartedException e) {
-                    logger.severe(e.getMessage());
-                }
-            }
-        };
     }
 }

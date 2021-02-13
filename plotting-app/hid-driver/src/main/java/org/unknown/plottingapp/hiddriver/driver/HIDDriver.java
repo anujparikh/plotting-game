@@ -73,7 +73,7 @@ public class HIDDriver implements Runnable {
                 Thread.sleep(this.samplingDelay);
                 elapsedTime += this.samplingDelay;
             } catch (IndexOutOfBoundsException | NumberFormatException | InterruptedException | NullPointerException e) {
-                logger.severe(e.getMessage());
+                logger.finer(e.getMessage());
             }
         }
     }

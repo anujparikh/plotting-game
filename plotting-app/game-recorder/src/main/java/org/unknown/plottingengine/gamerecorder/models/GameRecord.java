@@ -73,4 +73,14 @@ public class GameRecord {
     public void setGameSession(GameSession gameSession) {
         this.gameSession = gameSession;
     }
+
+    @Override
+    public String toString() {
+        return "GameRecord{" +
+                "x=" + x +
+                ", y=" + y +
+                ", direction=" + direction +
+                ", speed=" + speed +
+                '}';
+    }
 }

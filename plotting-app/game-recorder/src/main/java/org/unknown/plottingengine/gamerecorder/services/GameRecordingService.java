@@ -9,8 +9,11 @@ import org.unknown.plottingengine.gamerecorder.repositories.GameSessionRepositor
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 public class GameRecordingService {
+    private static final Logger logger = Logger.getLogger(GameRecordingService.class.getName());
     private final GameRecordRepository gameRecordRepository;
     private final GameSessionRepository gameSessionRepository;
     private GameSession gameSession;
@@ -47,5 +50,20 @@ public class GameRecordingService {
         } else {
             throw new GameNotStartedException();
         }
+    }
+
+    public Runnable createGameStateLoggingWorker(int renderDelay, Supplier<GameRecord> gameRecordSupplier) {
+        return () -> {
+            while (true) {
+                try {
+                    GameRecord gameRecord = gameRecordSupplier.get();
+                    logger.info(gameRecord.toString());
+                    addRecord(gameRecord);
+                    Thread.sleep(renderDelay);
+                } catch (InterruptedException | GameNotStartedException e) {
+                    logger.severe(e.getMessage());
+                }
+            }
+        };
     }
 }
