@@ -5,4 +5,5 @@
 */target/**
 */**/target/**
 *.log
+*-log.txt
 */db/**
