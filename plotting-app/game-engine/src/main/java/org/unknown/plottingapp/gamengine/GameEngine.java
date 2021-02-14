@@ -75,6 +75,7 @@ public class GameEngine {
         } catch (Exception e) {
             logger.severe(e.getMessage());
             gameEngine.gameRecordingService.endSession();
+            System.exit(0);
         }
     }
 
