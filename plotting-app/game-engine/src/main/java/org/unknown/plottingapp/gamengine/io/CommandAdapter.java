@@ -21,10 +21,12 @@ public class CommandAdapter extends KeyAdapter {
     public void hidCommandHandler(HIDState hidState) {
         switch (hidState.getRightLR()) {
             case LEFT:
-                gameState.setDirection(gameState.getDirection() - (float) Math.toRadians(turnRate));
+                gameState.setDirection(
+                        (float) ((gameState.getDirection() - (float) Math.toRadians(turnRate)) % (2 * Math.PI)));
                 break;
             case RIGHT:
-                gameState.setDirection(gameState.getDirection() + (float) Math.toRadians(turnRate));
+                gameState.setDirection(
+                        (float) ((gameState.getDirection() + (float) Math.toRadians(turnRate)) % (2 * Math.PI)));
                 break;
         }
 
@@ -45,10 +47,12 @@ public class CommandAdapter extends KeyAdapter {
 
         switch (key) {
             case 37:
-                gameState.setDirection(gameState.getDirection() - (float) Math.toRadians(turnRate));
+                gameState.setDirection(
+                        (float) ((gameState.getDirection() - (float) Math.toRadians(turnRate)) % (2 * Math.PI)));
                 break;
             case 39:
-                gameState.setDirection(gameState.getDirection() + (float) Math.toRadians(turnRate));
+                gameState.setDirection(
+                        (float) ((gameState.getDirection() + (float) Math.toRadians(turnRate)) % (2 * Math.PI)));
                 break;
             case 61:
             case 107:

@@ -1,6 +1,7 @@
 package org.unknown.plottingapp.gamengine.ui;
 
 
+import org.unknown.plottingapp.gamengine.datatypes.CardinalDirection;
 import org.unknown.plottingapp.gamengine.datatypes.GameState;
 import org.unknown.plottingapp.gamengine.io.CommandAdapter;
 
@@ -70,11 +71,11 @@ public class GraphicsPanel extends JPanel implements ActionListener {
 
     private void drawGrid(Graphics2D graphics2D) {
         // draw vertical
-        for (int i = GRID_SPACING; i <  this.getWidth(); i+= GRID_SPACING) {
+        for (int i = GRID_SPACING; i <  this.getWidth(); i+= Math.max(1, GRID_SPACING)) {
             graphics2D.drawLine(i, 0, i, this.getHeight());
         }
         // draw horizontal
-        for (int i = GRID_SPACING; i <  this.getWidth(); i+= GRID_SPACING) {
+        for (int i = GRID_SPACING; i <  this.getWidth(); i+= Math.max(1, GRID_SPACING)) {
             graphics2D.drawLine(0, i, this.getWidth(), i);
         }
     }
@@ -83,10 +84,19 @@ public class GraphicsPanel extends JPanel implements ActionListener {
         Graphics2D g2d = (Graphics2D) graphics;
         drawBoat(g2d);
         drawGrid(g2d);
+        drawDetails(g2d);
         if (this.isHistoryPlotEnabled) {
             drawCourseHistory(g2d);
         }
         g2d.dispose();
+    }
+
+    private void drawDetails(Graphics2D graphics2D) {
+        graphics2D.setColor(Color.GREEN);
+        graphics2D.drawString("Speed = " + this.gameState.getSpeed(), 50, 50);
+        graphics2D.drawString(
+                "Direction = " + CardinalDirection.getCardinalDirection(this.gameState.getDirection()),
+                50, 60);
     }
 
     private void initPanel(int frameWidth, int frameHeight, Timer timer) {
