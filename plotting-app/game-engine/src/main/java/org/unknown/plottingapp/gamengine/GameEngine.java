@@ -2,6 +2,7 @@ package org.unknown.plottingapp.gamengine;
 
 import org.unknown.plottingapp.gamengine.datatypes.GameState;
 import org.unknown.plottingapp.gamengine.io.CommandAdapter;
+import org.unknown.plottingapp.gamengine.io.KbHidCommandAdapterImpl;
 import org.unknown.plottingapp.gamengine.logging.LoggerInitializer;
 import org.unknown.plottingapp.gamengine.physics.PhysicsEngine;
 import org.unknown.plottingapp.gamengine.ui.GraphicsFrame;
@@ -21,11 +22,12 @@ import java.util.logging.Logger;
 
 public class GameEngine extends SwingWorker<Void, Void> {
     private static final String titlePrefix = "Course Plotter v0.1";
-    private final String sessionName;
     private static final float TURN_RATE = 5;
     private static final float ACCELERATION = 10;
     private static final int MAP_WIDTH = 1000;
     private static final int MAP_HEIGHT = 1000;
+    private static final Logger logger = Logger.getLogger(GameEngine.class.getName());
+    private final String sessionName;
     private final int historyBufferSize = 1000; // Could be increased
     private final int renderDelay;
     private final int hidPublishDelay;
@@ -35,7 +37,6 @@ public class GameEngine extends SwingWorker<Void, Void> {
     private final HIDDriver hidDriver;
     private final GameRecordingService gameRecordingService;
     private final ExecutorService executorService;
-    private static final Logger logger = Logger.getLogger(GameEngine.class.getName());
 
 
     public GameEngine(String sessionName) {
@@ -43,26 +44,11 @@ public class GameEngine extends SwingWorker<Void, Void> {
         this.renderDelay = 100;
         this.hidPublishDelay = 10;
         this.gameState = new GameState(150, 150, (float) Math.toRadians(0), historyBufferSize);
-        this.commandAdapter = new CommandAdapter(this.gameState, TURN_RATE, ACCELERATION);
+        this.commandAdapter = new KbHidCommandAdapterImpl(this.gameState, TURN_RATE, ACCELERATION);
         this.physicsEngine = new PhysicsEngine(this.gameState, renderDelay, MAP_WIDTH, MAP_HEIGHT);
         this.hidDriver = createHIDDeviceDriver();
         this.gameRecordingService = new GameRecordingService();
         this.executorService = Executors.newFixedThreadPool(3);
-    }
-
-    @Override
-    protected Void doInBackground() throws Exception {
-        start(sessionName);
-        return null;
-    }
-
-    public void start(String sessionName) throws GameAlreadyStartedException {
-        gameRecordingService.startSession(sessionName);
-        executorService.submit(this.physicsEngine);
-        executorService.submit(this.hidDriver);
-        executorService.submit(
-                gameRecordingService.createGameStateLoggingWorker(this.renderDelay,
-                        () -> GameStateConvertorUtil.convertToGameRecord(this.gameState)));
     }
 
     public static void main(String[] args) throws GameNotStartedException {
@@ -86,6 +72,21 @@ public class GameEngine extends SwingWorker<Void, Void> {
             gameEngine.gameRecordingService.endSession();
             System.exit(0);
         }
+    }
+
+    @Override
+    protected Void doInBackground() throws Exception {
+        start(sessionName);
+        return null;
+    }
+
+    public void start(String sessionName) throws GameAlreadyStartedException {
+        gameRecordingService.startSession(sessionName);
+        executorService.submit(this.physicsEngine);
+        executorService.submit(this.hidDriver);
+        executorService.submit(
+                gameRecordingService.createGameStateLoggingWorker(this.renderDelay,
+                        () -> GameStateConvertorUtil.convertToGameRecord(this.gameState)));
     }
 
     private HIDDriver createHIDDeviceDriver() {
