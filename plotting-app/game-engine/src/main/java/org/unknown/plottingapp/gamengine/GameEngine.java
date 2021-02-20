@@ -7,10 +7,11 @@ import org.unknown.plottingapp.gamengine.physics.PhysicsEngine;
 import org.unknown.plottingapp.gamengine.ui.GraphicsFrame;
 import org.unknown.plottingapp.gamengine.utils.GameStateConvertorUtil;
 import org.unknown.plottingapp.hiddriver.driver.HIDDriver;
-import org.unknown.plottingengine.gamerecorder.services.GameRecordingService;
 import org.unknown.plottingengine.gamerecorder.exceptions.GameAlreadyStartedException;
 import org.unknown.plottingengine.gamerecorder.exceptions.GameNotStartedException;
+import org.unknown.plottingengine.gamerecorder.services.GameRecordingService;
 
+import javax.swing.SwingWorker;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.concurrent.Callable;
@@ -18,8 +19,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
-public class GameEngine {
+public class GameEngine extends SwingWorker<Void, Void> {
     private static final String titlePrefix = "Course Plotter v0.1";
+    private final String sessionName;
     private static final float TURN_RATE = 5;
     private static final float ACCELERATION = 10;
     private static final int MAP_WIDTH = 1000;
@@ -36,7 +38,8 @@ public class GameEngine {
     private static final Logger logger = Logger.getLogger(GameEngine.class.getName());
 
 
-    public GameEngine() {
+    public GameEngine(String sessionName) {
+        this.sessionName = sessionName;
         this.renderDelay = 100;
         this.hidPublishDelay = 10;
         this.gameState = new GameState(150, 150, (float) Math.toRadians(0), historyBufferSize);
@@ -47,31 +50,37 @@ public class GameEngine {
         this.executorService = Executors.newFixedThreadPool(3);
     }
 
+    @Override
+    protected Void doInBackground() throws Exception {
+        start(sessionName);
+        return null;
+    }
+
     public void start(String sessionName) throws GameAlreadyStartedException {
         gameRecordingService.startSession(sessionName);
         executorService.submit(this.physicsEngine);
         executorService.submit(this.hidDriver);
         executorService.submit(
                 gameRecordingService.createGameStateLoggingWorker(this.renderDelay,
-                        ()-> GameStateConvertorUtil.convertToGameRecord(this.gameState)));
+                        () -> GameStateConvertorUtil.convertToGameRecord(this.gameState)));
     }
 
     public static void main(String[] args) throws GameNotStartedException {
         LoggerInitializer.initLogger();
-        GameEngine gameEngine = new GameEngine();
-        String title = titlePrefix + "_" + LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+        String sessionName = titlePrefix + "_" + LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+        GameEngine gameEngine = new GameEngine(sessionName);
         Callable<Void> onDisposeHandler = () -> {
             gameEngine.gameRecordingService.endSession();
             return null;
         };
         try {
             GraphicsFrame mainFrame = new GraphicsFrame(gameEngine.gameState, gameEngine.commandAdapter,
-                    gameEngine.renderDelay, title, false, onDisposeHandler);
+                    gameEngine.renderDelay, sessionName, false, onDisposeHandler);
             GraphicsFrame historyFrame = new GraphicsFrame(gameEngine.gameState, gameEngine.commandAdapter,
-                    gameEngine.renderDelay, title + "_history", true, onDisposeHandler);
+                    gameEngine.renderDelay, sessionName + "_history", true, onDisposeHandler);
             mainFrame.setVisible(true);
             historyFrame.setVisible(true);
-            gameEngine.start(title);
+            gameEngine.execute();
         } catch (Exception e) {
             logger.severe(e.getMessage());
             gameEngine.gameRecordingService.endSession();

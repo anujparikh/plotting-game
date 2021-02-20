@@ -12,6 +12,7 @@ public enum CardinalDirection {
 
     public static CardinalDirection getCardinalDirection(double heading) {
         float headingInDeg = (float) (Math.toDegrees(heading));
+        headingInDeg =  headingInDeg >= 0 ? headingInDeg : 360.0f + headingInDeg;
         CardinalDirection cardinalDirection = null;
         if (isClose(headingInDeg, 0.0f) || isClose(headingInDeg, 360.0f)) {
             cardinalDirection = NORTH;
